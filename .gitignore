@@ -1,0 +1,15 @@
+node_modules/
+venv/
+.env
+.env.local
+.env.production
+*.pyc
+__pycache__/
+dist/
+build/
+.next/
+.turbo/
+.DS_Store
+*.log
+coverage/
+.vscode/settings.json

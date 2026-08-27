@@ -1,0 +1,50 @@
+{
+  "summary": "Comprehensive backend + frontend testing of BELOTA GRC. Backend pytest: 30/33 passed. All non-AI endpoints (auth, CRM, diagnostic scoring, inventory sub-types, RoPA/RIPD/risks/actions/trainings/evidences/tickets CRUD, certificate rules, dashboards, audit, client scoping) work correctly. RoPA AI suggest works (~29s). 3 AI endpoints (diagnostic recommendations, RIPD generate, document generate) hit Cloudflare 502 Bad Gateway around 100s — backend/LLM keeps processing but the ingress gateway times out, so users will see errors on longer AI generations. Frontend E2E via Playwright: login → dashboard → create company → diagnostic (100%) → overview → inventory (all 4 sub-types + add) → risks (add) → certificate (VERIFIED seal issued) → audit populated → logout — ALL PASS.",
+  "backend_issues": {
+    "critical": [
+      {"endpoint": "POST /api/companies/{id}/diagnostic/ai-recommendations", "issue": "Returns 502 Bad Gateway from Cloudflare ingress (~100s timeout) for Claude Sonnet generations. Backend eventually completes but user sees error. Consider streaming, shorter prompts, background jobs, or a faster model.", "priority": "HIGH"},
+      {"endpoint": "POST /api/companies/{id}/ripd/ai-generate", "issue": "Same Cloudflare 502 ingress timeout on long AI generations", "priority": "HIGH"},
+      {"endpoint": "POST /api/companies/{id}/documents/generate", "issue": "Same Cloudflare 502 ingress timeout on long AI generations", "priority": "HIGH"}
+    ],
+    "minor": [
+      {"endpoint": "GET /api/companies/{id}/certificate", "issue": "Returns 404 before certificate is issued — frontend logs it as console error. Consider returning 200 with null or handling 404 silently in Certificate.jsx."},
+      {"endpoint": "startup", "issue": "@app.on_event('startup'/'shutdown') is deprecated in FastAPI; migrate to lifespan handlers."},
+      {"endpoint": "CORS", "issue": "Cookies are set with samesite='none'; secure=True which is fine for HTTPS preview but backend/.env has CORS_ORIGINS='*' unused — server hardcodes single FRONTEND_URL. Confirm intended."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "DialogContent (multiple dialogs)", "issue": "Radix Dialog console warning: 'Missing Description or aria-describedby={undefined}'. Add DialogDescription for a11y.", "selector": "div[role='dialog']", "priority": "LOW"},
+      {"component": "Header logout", "issue": "'Sair' logout button has no data-testid (spec mentions logout not required but consistency helps automated testing).", "selector": "button:has-text('Sair')", "priority": "LOW"}
+    ],
+    "integration_issues": [
+      {"flow": "AI Documents / RIPD / Diagnostic recommendations", "issue": "Ingress 502 after ~100s will surface as toast errors in UI. Users may retry and think feature is broken.", "affected_selectors": ["doc-generate-btn", "ripd-generate-btn", "ai-recommend-btn"]}
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/backend_test.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Address long AI request timeouts vs 100s Cloudflare ingress: use streaming/BackgroundTasks/async polling, or use a faster/smaller model for documents/RIPD/recommendations.",
+    "Silently handle 404 on GET /certificate in Certificate.jsx (no console error) since 'no cert yet' is expected state.",
+    "Add DialogDescription to Dialog components to remove a11y warnings.",
+    "Consider migrating deprecated FastAPI startup/shutdown events to lifespan handler.",
+    "Optional: add data-testid='logout-btn' to Sair button in Layout for test consistency."
+  ],
+  "critical_code_review_comments": [
+    "server.py is monolithic (~900 lines) — split into routers (auth, companies, diagnostic, inventory, ai, certificate, dashboard) for maintainability.",
+    "AI endpoints do not stream and do not use BackgroundTasks; long responses will exceed reverse-proxy timeouts. Consider persisting a job and polling on the frontend.",
+    "Diagnostic AI recommendations use current company/domain gaps but does not persist the recommendations — user must re-generate every time.",
+    "CrudSection uses path='events' for Auditoria tab; ensure it never triggers POST/DELETE (canCreate=false ✓, but confirm no delete UI is exposed).",
+    "verify_password wraps bcrypt.checkpw in try/except and silently returns False — okay, but log the exception for auditability.",
+    "No rate limiting or brute-force lockout on /auth/login (playbook mentions 5-attempt lockout expectation) — not implemented.",
+    "Cookies use samesite='none' unconditionally, which requires secure=True (ok on HTTPS but breaks local http dev)."
+  ],
+  "updated_files": ["/app/backend/tests/backend_test.py"],
+  "success_rate": {"backend": "91% (30/33)", "frontend": "100% of tested flows"},
+  "test_credentials": "Admin: fredbelota@gmail.com / Belota@2025 (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "Tests create and clean up TEST_/UITEST_ prefixed companies via admin session; one UITEST_Empresa_* remained after UI script (contains diagnostic 100%, risk, cert). Safe to leave or main agent can delete via API.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend pytest at /app/backend/tests/backend_test.py runs full regression in ~150s. AI tests (TestAI) may sporadically 502 due to Cloudflare ingress ~100s timeout — not a backend bug. Frontend UI selectors all use data-testid per spec and work reliably. Auditoria tab uses CrudSection with path='events' — safe as canCreate=false. Certificate tab requires compliance_score>=70; set all 15 diagnostic answers to 'sim' to reach 100%.",
+  "rca of the issue": "AI endpoints failing with 502: LLM generation via emergentintegrations→LiteLLM→Anthropic for long-form documents (RIPD, policy documents, multi-domain recommendations) takes >100s. Kubernetes/Cloudflare ingress default idle timeout terminates the connection while backend continues processing. Mitigation: (a) reduce prompt/max_tokens, (b) switch to a lighter model, (c) implement background job pattern (POST enqueues, client polls /jobs/{id}), or (d) use SSE streaming so bytes flow before the timeout window."
+}

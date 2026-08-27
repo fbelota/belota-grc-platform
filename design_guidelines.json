@@ -1,0 +1,137 @@
+{
+  "theme": "dark",
+  "design_archetype": "Luxury & Authority (Deep Navy, Gold, Green) - Premium Enterprise",
+  "typography": {
+    "headings": {
+      "family": "'Outfit', sans-serif",
+      "weights": ["400", "600", "700"],
+      "tracking": "tracking-tight",
+      "usage": "Dashboard widgets, page titles, section headers. NO Inter/Roboto."
+    },
+    "body": {
+      "family": "'IBM Plex Sans', sans-serif",
+      "weights": ["400", "500"],
+      "tracking": "tracking-normal",
+      "usage": "Data tables, forms, CRM lists, standard UI text."
+    },
+    "accent": {
+      "family": "'Playfair Display', serif",
+      "weights": ["600", "700"],
+      "usage": "Document generation (policies, NDA), Digital Certificates, BELOTA GRC VERIFIED™ seals."
+    },
+    "mono": {
+      "family": "'IBM Plex Mono', monospace",
+      "weights": ["400"],
+      "usage": "System inventories, IP addresses, RoPA IDs, compliance hash codes."
+    }
+  },
+  "colors": {
+    "background": {
+      "default": "#050A14",
+      "surface": "#0B1426",
+      "surface_elevated": "#121D36"
+    },
+    "brand": {
+      "gold_primary": "#C5A059",
+      "gold_light": "#D4AF37",
+      "navy_dark": "#050A14",
+      "green_dark": "#0F3D2B",
+      "green_accent": "#185C42"
+    },
+    "risk_matrix": {
+      "low": "#185C42",
+      "medium": "#C5A059",
+      "high": "#8B2323",
+      "critical": "#631212"
+    },
+    "text": {
+      "primary": "#F3F4F6",
+      "secondary": "#9CA3AF",
+      "gold": "#C5A059"
+    },
+    "border": {
+      "default": "#1A2744",
+      "gold_subtle": "rgba(197, 160, 89, 0.3)"
+    }
+  },
+  "visual_enhancers": {
+    "borders": "1px solid borders on cards using #1A2744. For active/premium elements, use gold subtle border.",
+    "shadows": "Minimal shadows in dark mode. Use subtle glows (drop-shadow with brand gold/green at 10% opacity) for focus states or verified seals.",
+    "textures": "Subtle noise/grain overlay on login screens and document covers to break digital flatness and emulate premium paper/security.",
+    "surfaces": "NO transparent backgrounds for overlays, modals, or headers. Use solid #0B1426 with a 1px border for distinction."
+  },
+  "components": {
+    "buttons": {
+      "primary": "Solid #C5A059 background, #050A14 text. Minimal rounding (rounded-sm). Hover: Brighten to #D4AF37.",
+      "secondary": "Transparent background, 1px solid #1A2744, #F3F4F6 text. Hover: bg-#121D36.",
+      "danger": "Solid #8B2323 for critical risk actions (delete asset, breach report)."
+    },
+    "cards": {
+      "style": "Flat background (#0B1426), sharp or slight rounding (rounded-sm), 1px solid border (#1A2744).",
+      "header": "Include an overline (uppercase, tracking-widest, text-xs, text-gold) above card titles for GRC classification."
+    },
+    "inputs": {
+      "style": "Solid dark background (#050A14), border (#1A2744). Focus ring should be gold (#C5A059)."
+    },
+    "tables": {
+      "style": "Dense padding (p-2 or p-3), distinct row hover state (#121D36), IBM Plex Sans for optimal data legibility."
+    }
+  },
+  "grids_layouts": {
+    "dashboard": "High Density Grid (Bento style). grid-cols-1 md:grid-cols-4. Tight gaps (gap-4 or gap-6). Use spans to prioritize the Compliance Score and Risk Matrix heatmap.",
+    "spacing": "Generous padding inside containers (p-6 or p-8) to maintain an authoritative, uncluttered look. Executive summaries need breathing room.",
+    "navigation": "Left sidebar (solid #0B1426, right border #1A2744) for Multi-portal switching (Consultant/DPO/Client)."
+  },
+  "motion": {
+    "transitions": "Specific properties only (e.g., transition-colors, transition-transform). NO 'transition-all'.",
+    "micro_interactions": "Subtle scale up on hover for dashboard widgets (-translate-y-0.5).",
+    "loading": "Use an elegant gold shimmer or spinning geometric shield for loading states, reflecting the BELOTA brand."
+  },
+  "accessibility": {
+    "contrast": "Ensure text over dark navy meets APCA/WCAG standards. Use off-white (#F3F4F6) for primary text.",
+    "focus": "All interactive elements must have a visible focus ring (ring-2 ring-[#C5A059] ring-offset-2 ring-offset-[#050A14])."
+  },
+  "media": {
+    "icons": "Use Phosphor Icons or Lucide React. Style: crisp, regular weight. Color: secondary text or gold for active states."
+  },
+  "image_urls": {
+    "brand_logo": {
+      "url": "https://customer-assets-lqy194kg.emergentagent.net/job_1c2c32c7-7e7b-4597-a81c-b2be819e9c9e/artifacts/qdprkwqg_tudo.png",
+      "description": "Primary BELOTA GRC Logo and Shield. Use in Sidebar, Header, Login, and Document generation headers."
+    },
+    "abstract_gold_texture": {
+      "url": "https://images.pexels.com/photos/5042025/pexels-photo-5042025.png?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Gold geometric pattern. Use at 10-20% opacity as a background element for the Login Screen, Digital Certificate backgrounds, or premium Document Covers."
+    },
+    "secure_data_server": {
+      "url": "https://images.pexels.com/photos/37730211/pexels-photo-37730211.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Dark blue secure data server. Use as a header banner or empty state illustration in the Data/Systems Inventory section."
+    },
+    "corporate_office_dark": {
+      "url": "https://images.pexels.com/photos/34649284/pexels-photo-34649284.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Dark corporate office exterior. Can be used for CRM / Client Onboarding backgrounds."
+    }
+  },
+  "3d_libraries": {
+    "recommendation": "Use Recharts for Executive Governance Dashboard and Risk Matrix Heatmaps. 3D is not recommended for strict compliance data visualization as it distorts readability. Use crisp 2D SVG charting.",
+    "risk_matrix": "Create a 5x5 heatmap grid using standard Tailwind grid and background colors mapping to the risk_matrix palette."
+  },
+  "general_ui_ux_guidelines": [
+    "Data Test IDs: All interactive and key informational elements MUST include a `data-testid` attribute (e.g., `data-testid=\"login-submit-button\"`, `data-testid=\"risk-matrix-widget\"`).",
+    "No transparent backgrounds: Dropdowns, sticky headers, and modals MUST have a solid background (e.g., bg-[#0B1426]) to prevent text collision over data.",
+    "Design for Trust: GRC platforms handle sensitive data. Avoid playful animations. Stick to rigid, functional beauty, utilizing sharp edges or minimal rounding.",
+    "Hierarchy through Typography: Use gold text for data points or scores, and muted gray for labels.",
+    "Avoid AI Slop: No generic centered layouts or simplistic gradients. Use z-index hierarchy and crisp borders to separate sections.",
+    "Toasts: Use Sonner for notifications (success, warnings for non-compliance).",
+    "Empty States: Make them actionable and visually tied to the brand (e.g., a subtle gold shield outline)."
+  ],
+  "instructions_to_main_agent": [
+    "CRITICAL: The environment uses .js files, NOT .tsx files. Write all React components as standard JavaScript (.js) or (.jsx) files. Do not use TypeScript annotations.",
+    "Implement the Multi-portal structure (Consultant, DPO, Client) via a clear context/state switcher in the sidebar/header.",
+    "Use Recharts for the Compliance Score donut chart and a custom Tailwind grid for the Risk Matrix (probability x impact heatmap).",
+    "For Document Generation and Certificates, utilize 'Playfair Display' for an institutional, authoritative look.",
+    "Apply 'Outfit' font for standard dashboard headings and 'IBM Plex Sans' for tabular data and forms.",
+    "Do not use generic blue/indigo. Strictly adhere to the BELOTA Navy (#050A14), Gold (#C5A059), and Green (#0F3D2B) palette.",
+    "Use standard Tailwind CSS classes. Extend tailwind.config.js with the provided colors and font families."
+  ]
+}

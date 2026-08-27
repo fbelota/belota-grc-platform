@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:wght@600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 218 60% 5%;
+        --foreground: 210 17% 96%;
+        --card: 218 48% 10%;
+        --card-foreground: 210 17% 96%;
+        --popover: 218 48% 10%;
+        --popover-foreground: 210 17% 96%;
+        --primary: 40 47% 56%;
+        --primary-foreground: 218 60% 5%;
+        --secondary: 218 40% 15%;
+        --secondary-foreground: 210 17% 96%;
+        --muted: 218 40% 15%;
+        --muted-foreground: 218 11% 65%;
+        --accent: 152 43% 15%;
+        --accent-foreground: 210 17% 96%;
+        --destructive: 0 60% 34%;
+        --destructive-foreground: 210 17% 96%;
+        --border: 218 45% 19%;
+        --input: 218 45% 19%;
+        --ring: 40 47% 56%;
+        --radius: 0.375rem;
+    }
+}
+
+@layer base {
+    * { @apply border-border; }
+    body {
+        margin: 0;
+        background-color: #050A14;
+        color: #F3F4F6;
+        font-family: 'IBM Plex Sans', sans-serif;
+        -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, h4, .font-heading { font-family: 'Outfit', sans-serif; }
+    ::selection { background: #C5A059; color: #050A14; }
+}
+
+.overline {
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.68rem;
+    color: #C5A059;
+    font-weight: 600;
+}
+
+.grain::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+}
+
+.scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: #1A2744; border-radius: 4px; }
+
+.prose-belota { line-height: 1.7; }
+.prose-belota h1, .prose-belota h2, .prose-belota h3 { color: #C5A059; margin: 1em 0 0.4em; font-family: 'Outfit'; }
+.prose-belota p { margin: 0.6em 0; color: #D1D5DB; }
+.prose-belota ul { margin: 0.5em 0; padding-left: 1.4em; list-style: disc; }
+.prose-belota li { margin: 0.25em 0; color: #D1D5DB; }
+.prose-belota strong { color: #F3F4F6; }
