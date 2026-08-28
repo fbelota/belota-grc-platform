@@ -1021,16 +1021,6 @@ async def shutdown():
     client.close()
 
 
-# ---------------------------------------------------------------------------
-# Premium modules (Sprint 1-4)
-# ---------------------------------------------------------------------------
-from modules import contract_review as _cr
-from modules import roadmap as _rm
-from modules import pdf_export as _pe
-api.include_router(_cr.router)
-api.include_router(_rm.router)
-api.include_router(_pe.router)
-
 app.include_router(api)
 app.add_middleware(
     CORSMiddleware,

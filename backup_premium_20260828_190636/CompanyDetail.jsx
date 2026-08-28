@@ -15,15 +15,11 @@ import Risks from "./company/Risks";
 import Documents from "./company/Documents";
 import Certificate from "./company/Certificate";
 import Tickets from "./company/Tickets";
-import ContractReview from "./ContractReview";
-import Roadmap from "./Roadmap";
-import RiskMatrix from "./RiskMatrix";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 
 const TABS = [
-  "Visão Geral", "Diagnóstico", "Roadmap", "Inventários", "RoPA", "RIPD",
-  "Matriz de Riscos", "Riscos", "Plano de Ação", "Revisão Contratual",
-  "Documentos", "Treinamentos", "Evidências", "Tickets", "Certificado", "Auditoria",
+  "Visão Geral", "Diagnóstico", "Inventários", "RoPA", "RIPD", "Riscos",
+  "Plano de Ação", "Documentos", "Treinamentos", "Evidências", "Tickets", "Certificado", "Auditoria",
 ];
 
 export default function CompanyDetail() {
@@ -86,9 +82,6 @@ export default function CompanyDetail() {
         {tab === "Inventários" && <Inventory companyId={id} canCreate={isStaff} />}
         {tab === "RoPA" && <Ropa companyId={id} canCreate={isStaff} />}
         {tab === "RIPD" && <Ripd companyId={id} canCreate={isStaff} />}
-        {tab === "Roadmap" && <Roadmap companyId={id} isStaff={isStaff} />}
-        {tab === "Matriz de Riscos" && <RiskMatrix companyId={id} />}
-        {tab === "Revisão Contratual" && <ContractReview companyId={id} canCreate={isStaff} />}
         {tab === "Riscos" && <Risks companyId={id} canCreate={isStaff} onChanged={bump} />}
         {tab === "Plano de Ação" && (
           <CrudSection companyId={id} path="actions" canCreate={isStaff}
