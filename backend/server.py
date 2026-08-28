@@ -18,12 +18,17 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field, EmailStr
 
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+try:
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+    _HAS_EMERGENT_LLM = True
+except Exception:
+    _HAS_EMERGENT_LLM = False
+    from ai_provider import ai_generate as _portable_ai_generate
 import io
 import httpx
 import markdown as md
 from xhtml2pdf import pisa
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 
 # ---------------------------------------------------------------------------
 # Setup
@@ -34,7 +39,7 @@ db = client[os.environ['DB_NAME']]
 
 JWT_SECRET = os.environ['JWT_SECRET']
 JWT_ALGORITHM = "HS256"
-EMERGENT_LLM_KEY = os.environ['EMERGENT_LLM_KEY']
+EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
 
 app = FastAPI(title="BELOTA GRC Platform API")
 api = APIRouter(prefix="/api")
@@ -159,10 +164,12 @@ async def log_event(company_id: Optional[str], user: dict, action: str, entity: 
 # AI helper
 # ---------------------------------------------------------------------------
 async def ai_generate(system_message: str, prompt: str) -> str:
-    chat = LlmChat(api_key=EMERGENT_LLM_KEY, session_id=new_id(),
-                   system_message=system_message).with_model("anthropic", "claude-sonnet-4-6")
-    resp = await chat.send_message(UserMessage(text=prompt))
-    return resp if isinstance(resp, str) else str(resp)
+    if _HAS_EMERGENT_LLM and EMERGENT_LLM_KEY:
+        chat = LlmChat(api_key=EMERGENT_LLM_KEY, session_id=new_id(),
+                       system_message=system_message).with_model("anthropic", "claude-sonnet-4-6")
+        resp = await chat.send_message(UserMessage(text=prompt))
+        return resp if isinstance(resp, str) else str(resp)
+    return await _portable_ai_generate(system_message, prompt)
 
 
 # ---------------------------------------------------------------------------
@@ -435,7 +442,7 @@ async def google_session(request: Request, response: Response):
     email = data["email"].lower()
     user = await db.users.find_one({"email": email})
     if not user:
-        role = "admin" if email == os.environ["ADMIN_EMAIL"].lower() else "consultor"
+        role = "admin" if email == os.environ.get("ADMIN_EMAIL", "admin@belotagrc.com.br").lower() else "consultor"
         uid = new_id()
         user = {"id": uid, "name": data.get("name") or email, "email": email,
                 "password_hash": "", "role": role, "company_id": None,
@@ -1002,8 +1009,8 @@ async def global_dashboard(user: dict = Depends(get_current_user)):
 async def startup():
     await db.users.create_index("email", unique=True)
     await db.users.create_index("id", unique=True)
-    admin_email = os.environ["ADMIN_EMAIL"].lower()
-    admin_pw = os.environ["ADMIN_PASSWORD"]
+    admin_email = os.environ.get("ADMIN_EMAIL", "admin@belotagrc.com.br").lower()
+    admin_pw = os.environ.get("ADMIN_PASSWORD", "belota2026")
     existing = await db.users.find_one({"email": admin_email})
     if not existing:
         await db.users.insert_one({
@@ -1039,3 +1046,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ---------------------------------------------------------------------------
+# SPA static serving (deploy fora do Emergent)
+# ---------------------------------------------------------------------------
+STATIC_DIR = ROOT_DIR / "static"
+
+@app.get("/{full_path:path}")
+async def serve_spa(full_path: str):
+    if full_path.startswith("api/"):
+        raise HTTPException(404)
+    fp = STATIC_DIR / full_path
+    if full_path and fp.exists() and fp.is_file():
+        return FileResponse(fp)
+    idx = STATIC_DIR / "index.html"
+    if idx.exists():
+        return FileResponse(idx)
+    raise HTTPException(404)
