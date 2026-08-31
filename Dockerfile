@@ -9,7 +9,7 @@ RUN CI=false yarn build
 FROM python:3.11-slim
 WORKDIR /app
 COPY backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt uvicorn qrcode Pillow
+RUN grep -v "emergentintegrations" requirements.txt > req.txt && pip install --no-cache-dir -r req.txt uvicorn qrcode Pillow
 COPY backend/ .
 COPY --from=fe /fe/build ./static
 EXPOSE 8000
