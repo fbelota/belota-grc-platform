@@ -1037,6 +1037,8 @@ from modules import pdf_export as _pe
 api.include_router(_cr.router)
 api.include_router(_rm.router)
 api.include_router(_pe.router)
+from modules import dpo_licit as _dl
+api.include_router(_dl.router)
 
 app.include_router(api)
 app.add_middleware(
