@@ -8,9 +8,10 @@ ENV REACT_APP_BACKEND_URL=""
 RUN CI=false yarn build
 
 FROM python:3.11-slim
+RUN apt-get update && apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-por poppler-utils && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY backend/requirements.txt .
-RUN grep -v "emergentintegrations" requirements.txt > req.txt && pip install --no-cache-dir -r req.txt uvicorn qrcode Pillow httpx markdown xhtml2pdf pypdf python-docx
+RUN grep -v "emergentintegrations" requirements.txt > req.txt && pip install --no-cache-dir -r req.txt uvicorn qrcode Pillow httpx markdown xhtml2pdf pypdf python-docx pytesseract pdf2image
 COPY backend/ .
 COPY --from=fe /fe/build ./static
 EXPOSE 8000
