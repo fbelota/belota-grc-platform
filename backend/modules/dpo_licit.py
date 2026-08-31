@@ -10,19 +10,11 @@ from server import (db, now_iso, new_id, log_event, ai_generate,
 
 router = APIRouter()
 
+from extractor import extract_text as _extract_shared
+
 def extract_text(data: bytes, filename: str) -> str:
-    name = (filename or "").lower()
-    if name.endswith(".pdf"):
-        import pypdf
-        reader = pypdf.PdfReader(io.BytesIO(data))
-        return "\n".join((p.extract_text() or "") for p in reader.pages)
-    if name.endswith(".docx"):
-        import docx
-        d = docx.Document(io.BytesIO(data))
-        return "\n".join(p.text for p in d.paragraphs)
-    if name.endswith((".txt", ".md")):
-        return data.decode("utf-8", errors="replace")
-    raise HTTPException(400, "Formato nao suportado. Envie PDF, DOCX ou TXT.")
+    text, _method = _extract_shared(data, filename)
+    return text
 
 def parse_json_loose(text: str):
     try:
