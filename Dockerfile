@@ -4,6 +4,7 @@ COPY frontend/package.json frontend/yarn.lock ./
 RUN node -e "const f=require('fs');const p=JSON.parse(f.readFileSync('package.json'));delete (p.devDependencies||{})['@emergentbase/visual-edits'];f.writeFileSync('package.json',JSON.stringify(p,null,2))"
 RUN yarn install --network-timeout 600000
 COPY frontend/ .
+ENV REACT_APP_BACKEND_URL=""
 RUN CI=false yarn build
 
 FROM python:3.11-slim
