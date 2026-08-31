@@ -47,23 +47,10 @@ async def upload_contract(company_id: str, file: UploadFile = File(...),
     data = await file.read()
     if len(data) > 15 * 1024 * 1024:
         raise HTTPException(400, "Arquivo acima de 15MB")
-    name = (file.filename or "").lower()
-    text = ""
-    if name.endswith(".pdf"):
-        import pypdf
-        reader = pypdf.PdfReader(io.BytesIO(data))
-        text = "\n".join((p.extract_text() or "") for p in reader.pages)
-    elif name.endswith(".docx"):
-        import docx
-        d = docx.Document(io.BytesIO(data))
-        text = "\n".join(p.text for p in d.paragraphs)
-    elif name.endswith((".txt", ".md")):
-        text = data.decode("utf-8", errors="replace")
-    else:
-        raise HTTPException(400, "Formato nao suportado. Envie PDF, DOCX ou TXT.")
-    if not text.strip():
-        raise HTTPException(400, "Sem texto extraivel (PDF escaneado/imagem?). Cole o texto manualmente.")
+    from extractor import extract_text
+    text, method = extract_text(data, file.filename)
     doc = _base_doc(company_id, contract_type, counterparty, text, "upload", file.filename)
+    doc["extraction_method"] = method
     await db.contract_reviews.insert_one(doc)
     await log_event(company_id, user, "upload", "contrato", file.filename or "")
     doc.pop("_id", None)
