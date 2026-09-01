@@ -47,7 +47,7 @@ async def upload_contract(company_id: str, file: UploadFile = File(...),
     data = await file.read()
     if len(data) > 15 * 1024 * 1024:
         raise HTTPException(400, "Arquivo acima de 15MB")
-    from extractor import extract_text
+    from modules.extractor import extract_text
     text, method = extract_text(data, file.filename)
     doc = _base_doc(company_id, contract_type, counterparty, text, "upload", file.filename)
     doc["extraction_method"] = method
