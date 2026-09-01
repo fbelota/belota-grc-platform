@@ -10,7 +10,7 @@ from server import (db, now_iso, new_id, log_event, ai_generate,
 
 router = APIRouter()
 
-from extractor import extract_text as _extract_shared
+from modules.extractor import extract_text as _extract_shared
 
 def extract_text(data: bytes, filename: str) -> str:
     text, _method = _extract_shared(data, filename)
