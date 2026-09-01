@@ -11,7 +11,7 @@ export default function Login() {
   const { login, register } = useAuth();
   const nav = useNavigate();
   const [mode, setMode] = useState("login");
-  const [form, setForm] = useState({ name: "", email: "", password: "", role: "consultor" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", role: "consultor", company_id: "" });
   const [loading, setLoading] = useState(false);
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
@@ -20,7 +20,7 @@ export default function Login() {
     setLoading(true);
     try {
       if (mode === "login") await login(form.email, form.password);
-      else await register({ name: form.name, email: form.email, password: form.password, role: form.role });
+      else await register({ name: form.name, email: form.email, password: form.password, role: form.role, company_id: form.company_id || undefined });
       toast.success("Bem-vindo à plataforma BELOTA GRC");
       nav("/");
     } catch (err) {
@@ -101,7 +101,14 @@ export default function Login() {
                     <option value="cliente">Cliente</option>
                   </select>
                 </div>
-              )}
+)}
+{mode === "register" && form.role === "cliente" && (
+  <div>
+    <Label className="text-belota-muted">Código da empresa (ID)</Label>
+    <Input value={form.company_id} onChange={set("company_id")}
+      className="bg-belota-bg border-belota-border mt-1" placeholder="Cole o ID da empresa" />
+  </div>
+)}
               <Button data-testid="submit-btn" type="submit" disabled={loading}
                 className="w-full bg-belota-gold text-belota-bg hover:bg-belota-goldlight rounded-sm font-medium">
                 {loading ? "Processando..." : mode === "login" ? "Entrar" : "Criar conta"}
