@@ -15,6 +15,7 @@ export default function Layout({ children }) {
   const items = [
     { to: "/", label: "Painel Executivo", icon: LayoutDashboard, end: true },
     { to: "/empresas", label: isStaff ? "CRM / Empresas" : "Minha Empresa", icon: Building2 },
+    { to: "/portal", label: isStaff ? "Portal" : "Minha Empresa", icon: Building2 },
   ];
 
   return (
