@@ -20,11 +20,12 @@ import Roadmap from "./Roadmap";
 import RiskMatrix from "./RiskMatrix";
 import Licitations from "./Licitations";
 import DpoService from "./DpoService";
+import EvidenceChain from "./EvidenceChain";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 
 const TABS = [
   "Visão Geral", "Diagnóstico", "Roadmap", "Inventários", "RoPA", "RIPD",
-  "Matriz de Riscos", "Riscos", "Plano de Ação", "Revisão Contratual", "Licitações", "DPO as a Service",
+  "Matriz de Riscos", "Riscos", "Plano de Ação", "Revisão Contratual", "Licitações", "DPO as a Service", "Cadeia de Evidências",
   "Documentos", "Treinamentos", "Evidências", "Tickets", "Certificado", "Auditoria",
 ];
 
@@ -93,6 +94,7 @@ export default function CompanyDetail() {
         {tab === "Revisão Contratual" && <ContractReview companyId={id} canCreate={isStaff} />}
         {tab === "Licitações" && <Licitations companyId={id} canCreate={isStaff} />}
         {tab === "DPO as a Service" && <DpoService companyId={id} isStaff={isStaff} />}
+        {tab === "Cadeia de Evidências" && <EvidenceChain companyId={id} canCreate={isStaff} />}
         {tab === "Riscos" && <Risks companyId={id} canCreate={isStaff} onChanged={bump} />}
         {tab === "Plano de Ação" && (
           <CrudSection companyId={id} path="actions" canCreate={isStaff}
