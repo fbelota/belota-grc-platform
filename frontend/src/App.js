@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Companies from "./pages/Companies";
 import CompanyDetail from "./pages/CompanyDetail";
+import Portal from "./pages/Portal";
 import "./App.css";
 
 const wrap = (el) => (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/" element={wrap(<Dashboard />)} />
           <Route path="/empresas" element={wrap(<Companies />)} />
           <Route path="/empresas/:id" element={wrap(<CompanyDetail />)} />
+          <Route path="/portal" element={wrap(<Portal />)} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" theme="dark" richColors />
